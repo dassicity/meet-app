@@ -11,7 +11,7 @@ const { ExpressPeerServer } = require('peer');
 const url = require('url');
 const { Socket } = require('socket.io');
 const peerServer = ExpressPeerServer(server, {
-    debug: true
+    debug: true         // to receive all the errors
 });
 
 //middlewares
@@ -40,14 +40,14 @@ app.get("/joinold/:meeting_id", (req, res, next) => {
             pathname: req.params.meeting_id,
             query: req.query
         })
-    )
+    );
 });
 
 // api for joining a room
 app.get("/join/:rooms", (req, res, next) => {
     res.render("room", {
         roomid: req.params.rooms,
-        Myname: req.query.name
+        myname: req.query.name
     });
 });
 
