@@ -1,14 +1,16 @@
-const { default: Peer } = require("peerjs");
+// const { default: Peer } = require("peerjs");
 
 const socket = io("/");
 
-const main_chat_window = document.getElementById("main__chat__window");
-const video_grids = document.getElementById("video_grids");
-const my_video = document.getElementById("video");
+// const main_chat_window = document.getElementById("main__chat__window");
+const video_grids = document.getElementById("video-grids");
+const my_video = document.createElement("video");
 const chat = document.getElementById("chat");
+// console.log(video_grids);
 
 other_username = "";
-my_video.muted = true;
+// my_video.muted = true;
+
 
 window.onload = () => {                         // This is implemented in JQuery
     $(document).ready(function () {             // Vanilla JS soon ->
@@ -35,11 +37,11 @@ getUserMedia({
     audio: true
 }).then((stream) => {
     my_video_stream = stream;       //Video stream received from getUserMedia is stored to User's video stream
-    addVideoStream(my_video, stream, my_name);
+    addVideoStream(my_video, stream, myname);
 
     socket.on("user-connected", (id, username) => {
         connect_new_user(id, stream, username);      // Connecting video stream to other user
-        socket.emit("tellname", my_name);
+        socket.emit("tellname", myname);
     });
 
     socket.on("user-disconnected", (id) => {
@@ -62,7 +64,7 @@ peer.on("call", (call) => {             // When we are receiving a call from som
 });
 
 peer.on("open", (id) => {
-    socket.emit("join-room", room_id, id, my_name);     // When connection is established b/w peers
+    socket.emit("join-room", roomId, id, myname);     // When connection is established b/w peers
 });
 
 socket.on("AddName", (username) => {
@@ -98,7 +100,9 @@ const connect_new_user = (user_id, stream, username) => {        // Connecting a
 
 const addVideoStream = (video_element, stream, name) => {
     video_element.srcObject = stream;
-    video_element.addEventListener("loadmetadata", () => {
+    console.log(stream);
+    video_element.addEventListener("loadedmetadata", () => {
+        console.log("In add video stream");
         video_element.play();
     });
 

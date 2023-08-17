@@ -25,6 +25,7 @@ app.get("/", (req, res, next) => {
 
 //api to get the url - new url
 app.get("/join", (req, res, next) => {
+    console.log("In Join");
     res.redirect(
         url.format({
             pathname: `/join/${uuidv4()}`,
@@ -35,6 +36,7 @@ app.get("/join", (req, res, next) => {
 
 //api to go to the url if uuid already exists
 app.get("/joinold/:meeting_id", (req, res, next) => {
+    console.log("In JoinOld");
     res.redirect(
         url.format({
             pathname: req.params.meeting_id,
@@ -45,6 +47,7 @@ app.get("/joinold/:meeting_id", (req, res, next) => {
 
 // api for joining a room
 app.get("/join/:rooms", (req, res, next) => {
+    console.log("In Join Room");
     res.render("room", {
         roomid: req.params.rooms,
         myname: req.query.name
@@ -54,15 +57,18 @@ app.get("/join/:rooms", (req, res, next) => {
 io.on("connection", (socket) => {
 
     socket.on("join-room", (roomid, id, myname) => {
-        socket.join(room);
-        socket.to(roomid).broadcast.emit("user-connected", id, myname);
+        console.log("In Join Room socket");
+        socket.join(roomid);
+        socket.to(roomid).emit("user-connected", id, myname);
 
         socket.on("tellname", (myname) => {
-            socket.to(roomid).broadcast.emit("addname", myname);
+            console.log("In Tell name");
+            socket.to(roomid).emit("addname", myname);
         });
 
         socket.on("disconnect", () => {
-            socket.to(roomid).broadcast.emit("user-disconnected", id);
+            console.log("In disconnect");
+            socket.to(roomid).emit("user-disconnected", id);
         });
     });
 });
