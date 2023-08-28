@@ -32,24 +32,26 @@ const peers = {};               // List of all the peers or people in the room
 
 var getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-getUserMedia({
-    video: true,
-    audio: true
-}).then((stream) => {
-    my_video_stream = stream;       //Video stream received from getUserMedia is stored to User's video stream
-    addVideoStream(my_video, stream, myname);
-
-    socket.on("user-connected", (id, username) => {
-        connect_new_user(id, stream, username);      // Connecting video stream to other user
-        socket.emit("tellname", myname);
-    });
-
-    socket.on("user-disconnected", (id) => {
-        if (peers[id]) {
-            peers[id].close();
-        }
+navigator.mediaDevices
+    .getUserMedia({
+        video: true,
+        audio: true
     })
-});
+    .then((stream) => {
+        my_video_stream = stream;       //Video stream received from getUserMedia is stored to User's video stream
+        addVideoStream(my_video, stream, myname);
+
+        socket.on("user-connected", (id, username) => {
+            connect_new_user(id, stream, username);      // Connecting video stream to other user
+            socket.emit("tellname", myname);
+        });
+
+        socket.on("user-disconnected", (id) => {
+            if (peers[id]) {
+                peers[id].close();
+            }
+        })
+    });
 
 // Procedure when some other person calls
 
